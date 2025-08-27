@@ -1,21 +1,50 @@
 import mongoose from "mongoose";
+import { randomUUID } from "crypto";
 
-// 1- create a schema
-// 2- create a model
+const chatSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    default: () => randomUUID(),
+  },
+  role: {
+    type: String,
+    required: true,
+  },
+  content: {
+    type: String,
+    required: true,
+  }
+});
+
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  chats: [chatSchema],
+});
 
 const noteSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true
+    required: true,
   },
   content: {
     type: String,
-    required: true
+    required: true,
   },
-},
-  { timestamps: true }
-);
+}, { timestamps: true });
 
 const Note = mongoose.model('Note', noteSchema);
+const User = mongoose.model('User', userSchema);
 
-export default Note;
+export { Note, User };

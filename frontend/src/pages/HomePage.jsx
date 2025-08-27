@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import Navbar from '../components/Navbar'
+import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 import RateLimitedUI from '../components/RateLimitedUI';
 import api from '../lib/axios';
 import toast from 'react-hot-toast';
@@ -10,21 +11,30 @@ const HomePage = () => {
   const [isRateLimited, setIsRateLimited] = useState(false);
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
+  // 🔐 Auth check on mount
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Please log in first");
+      navigate("/login");
+    }
+  }, [navigate]);
+
+  // 📥 Fetch notes
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const res = await api.get("/notes")
-
-        console.log(res.data);
-        setNotes(res.data)
+        const res = await api.get("/v1/notes");
+        setNotes(res.data);
         setIsRateLimited(false);
       } catch (error) {
         console.log("Error fetching notes:", error);
-        if (error.response && error.response.status === 429) {
+        if (error.response?.status === 429) {
           setIsRateLimited(true);
         } else {
-          toast.error("Failed to fetch notes. Please try again later.")
+          toast.error("Failed to fetch notes. Please try again later.");
         }
       } finally {
         setLoading(false);
@@ -32,12 +42,20 @@ const HomePage = () => {
     };
 
     fetchNotes();
-  },
-    []);
+  }, []);
+
+  // 🚪 Logout handler
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // or clear cookie if using cookies
+    toast.success("Logged out successfully");
+    navigate("/login");
+  };
 
   return (
     <div className="min-h-screen">
       <Navbar />
+
+
 
       {isRateLimited && <RateLimitedUI />}
 
@@ -51,12 +69,19 @@ const HomePage = () => {
             {notes.map((note) => (
               <NoteCard key={note._id} note={note} setNotes={setNotes} />
             ))}
-
           </div>
         )}
       </div>
+      <div className="flex justify-end px-4 mt-4">
+        <button
+          onClick={handleLogout}
+          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+        >
+          Logout
+        </button>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;
