@@ -8,7 +8,7 @@ import app from "./app"; // your Express app
 const PORT = process.env.PORT || 5001;
 
 // Serve Vite build
-const frontendPath = path.join(__dirname, "../frontend/dist");
+const frontendPath = path.join(__dirname, "../../frontend/dist");
 app.use(express.static(frontendPath));
 
 // Handle React Router routes
