@@ -22,12 +22,17 @@ const CreatePage = () => {
 
     setLoading(true);
     try {
-      await api.post("/api/v1/user/notes", {
+      const token = localStorage.getItem("token");
+      await api.post("/v1/notes", {
         title,
         content
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
       });
       toast.success("Note created successfully");
-      navigate("/")
+      navigate("/home")
 
     } catch (error) {
       console.log("Error creating note:", error);
@@ -49,7 +54,7 @@ const CreatePage = () => {
     <div className="min-h-screen bg-base-200">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
-          <Link to={"/"} className="btn btn-ghost mb-6">
+          <Link to={"/home"} className="btn btn-ghost mb-6">
             <ArrowLeftIcon className="size-5" />
             Back to Notes
           </Link>
