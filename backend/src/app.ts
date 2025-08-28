@@ -1,8 +1,8 @@
 import express, { Application } from "express";
 import { config } from "dotenv";
-import rateLimiter from './src/middleware/rateLimiter.js';
+import rateLimiter from './middleware/rateLimiter';
 import morgan from 'morgan';
-import appRouter from "./src/routes/index.js";
+import appRouter from "./routes/index";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 

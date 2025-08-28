@@ -1,6 +1,7 @@
-import { Note } from "../models/Note.js";
+import { Request, Response } from "express";
+import { Note } from "../models/Note";
 
-export const getAllNotes = async (_, res) => {
+export const getAllNotes = async (_: Request, res: Response) => {
   try {
     const notes = await Note.find().sort({ createdAt: -1 });
     res.status(200).json(notes);
@@ -11,7 +12,7 @@ export const getAllNotes = async (_, res) => {
   }
 };
 
-export const getNoteById = async (req, res) => {
+export const getNoteById = async (req: Request, res: Response) => {
   try {
     const note = await Note.findById(req.params.id);
     if (!note) return res.status(404).json({ message: "Note not found" });
@@ -24,7 +25,7 @@ export const getNoteById = async (req, res) => {
 }
 
 
-export const createNote = async (req, res) => {
+export const createNote = async (req: Request, res: Response) => {
   try {
     const { title, content } = req.body;
     const note = new Note({ title, content });
@@ -38,7 +39,7 @@ export const createNote = async (req, res) => {
   }
 };
 
-export const updateNote = async (req, res) => {
+export const updateNote = async (req: Request, res: Response) => {
   try {
     const { title, content } = req.body
     const updatedNote = await Note.findByIdAndUpdate(req.params.id, { title, content }, { new: true });
@@ -52,7 +53,7 @@ export const updateNote = async (req, res) => {
   }
 };
 
-export const deleteNote = async (req, res) => {
+export const deleteNote = async (req: Request, res: Response) => {
   try {
     const deletedNote = await Note.findByIdAndDelete(req.params.id);
     if (!deletedNote) return res.status(404).json({ message: "Note not found" });

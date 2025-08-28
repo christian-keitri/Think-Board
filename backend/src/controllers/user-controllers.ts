@@ -1,17 +1,19 @@
 import { Request, Response, NextFunction } from "express";
-import { User } from "../models/Note.js";
+import { User } from "../models/Note";
 import { hash, compare } from 'bcrypt';
-import { createToken } from "../utils/token-manager.js";
-import { COOKIE_NAME } from "../utils/constants.js";
+import { createToken } from "../utils/token-manager";
+import { COOKIE_NAME } from "../utils/constants";
 
 export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const users = await User.find();
 
     return res.status(200).json({ message: "OK", users })
-  } catch (error) {
-    console.log(error);
-    return res.status(200).json({ message: "Error", cause: error.message });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return res.status(200).json({ message: "Error", cause: error.message });
+    }
+    return res.status(200).json({ message: "Error", cause: String(error) });
   }
 };
 
@@ -50,10 +52,10 @@ export const userSignup = async (req: Request, res: Response, next: NextFunction
     return res.status(201).json({ message: "OK", id: userSignup.bind.toString() });
 
 
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
     return res.status(200).json({ message: "Error", cause: error.message });
   }
+
 };
 
 export const userLogin = async (req: Request, res: Response, next: NextFunction) => {
@@ -90,8 +92,8 @@ export const userLogin = async (req: Request, res: Response, next: NextFunction)
 
     return res.status(200).json({ message: "OK", id: userSignup.bind.toString() });
 
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
     return res.status(200).json({ message: "Error", cause: error.message });
   }
+
 };
